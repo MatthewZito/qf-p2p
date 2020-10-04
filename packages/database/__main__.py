@@ -1,4 +1,4 @@
-from server.server import Server
+from src.server.server import Server
 
 if __name__ == "__main__":
     from gevent import monkey; monkey.patch_all()
