@@ -7,7 +7,7 @@ from socket import error as socket_error
 from constants.errors import *
 from constants.commands_enum import commands
 
-from server.protocol_handler import ProtocolHandler
+from protocol_handler import ProtocolHandler
 from store.vault import Vault
 
 class Server(object):
@@ -37,7 +37,7 @@ class Server(object):
     def get_response(self, data):
         if not isinstance(data, list):
             try:
-                data = data.split()
+                data = data.decode().split()
             except:
                 raise CommandError("[-] Request must be list or simple string")
         
@@ -46,8 +46,9 @@ class Server(object):
 
         command = data[0].upper()
         if command not in self.commands:
-            raise CommandError(f"[-] Unrecognized command {command}")
-        return self.commands[command](*data[1:])
+            raise CommandError("[-] Unrecognized command %s" % command)    
+        else:
+            return self.commands[command](*data[1:])
 
     def connection_handler(self, conn, address):
         # Convert "conn" (a socket object) into a file-like object.

@@ -66,26 +66,25 @@ class ProtocolHandler(object):
         if isinstance(data, str):
             data = data.encode("utf-8")
 
-        if isinstance(data, bytes):
-            buffer.write(f"${len(data)}\r\n{data}\r\n")
+        if isinstance(data, bytes): 
+            buffer.write(b"$%s\r\n%s\r\n" % (len(data), data))
         elif isinstance(data, int):
-            buffer.write(f":{data}\r\n")
+            buffer.write(b":%s\r\n" % data)
         elif isinstance(data, Error):
-            buffer.write(f"-{error.message}\r\n")
+            buffer.write(b"-%s\r\n" % error.message)
         elif isinstance(data, (list, tuple)):
-            print(data)
-            buffer.write(f"*{len(data)}\r\n")
+            buffer.write(b"*%i\r\n" % len(data))
             for item in data:
                 self.__write(buffer, item)
         elif isinstance(data, dict):
-            buffer.write("%%%s\r\n" % len(data))
+            buffer.write(b"%%%s\r\n" % len(data))
             for key in data:
                 self.__write(buffer, key)
                 self.__write(buffer, data[key])
         elif data is None:
-            buffer.write("$-1\r\n")
+            buffer.write(b"$-1\r\n")
         else:
             raise CommandError("[-] Unrecognized type: %s" % type(data))
 
-    def __parse_file(file):
+    def __parse_file(self, file):
         return int(file.readline().rstrip(char["RETURN"]))

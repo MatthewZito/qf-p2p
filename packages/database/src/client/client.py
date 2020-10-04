@@ -8,9 +8,9 @@ from server.protocol_handler import ProtocolHandler
 class Client(object):
     def __init__(self, host="127.0.0.1", port=31337):
         self.protocol = ProtocolHandler()
-        self.__socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        self.__socket.connect((host, port))
-        self.file = self.__socket.makefile("rwb")
+        self.conn = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        self.conn.connect((host, port))
+        self.file = self.conn.makefile("rwb")
 
     def execute(self, *args):
         self.protocol.write_response(self.file, args)
@@ -18,7 +18,7 @@ class Client(object):
 
         if isinstance(response, Error):
             raise CommandError(response.message)
-        return response
+        print(response)
     
     def get(self, key):
         return self.execute(commands["GET"], key)
