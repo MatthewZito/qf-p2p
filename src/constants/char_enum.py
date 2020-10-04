@@ -1,0 +1,3 @@
+char = {
+    "RETURN": "\r\n"
+}
